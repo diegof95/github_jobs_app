@@ -1,0 +1,24 @@
+{
+  "name": "github-jobs-app",
+  "version": "1.0.0",
+  "description": "A react app to list and search jobs from Github Jobs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegof95/github_jobs_app.git"
+  },
+  "author": "diegof95",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegof95/github_jobs_app/issues"
+  },
+  "homepage": "https://github.com/diegof95/github_jobs_app#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
