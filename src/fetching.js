@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const API_ENDPOINT = 'https://jobs.github.com/positions.json?'
 
-function reducer(state, action){
+function jobsReducer(state, action){
   switch(action.type){
     case 'MAKE_REQUEST':
       return {
@@ -15,7 +15,7 @@ function reducer(state, action){
     case 'SUCCESS_REQUEST':
       return {
         ...state,
-        jobs: action.payload,
+        jobs: action.payload.jobs,
         loading: false,
         error: false
       }
@@ -35,7 +35,7 @@ function reducer(state, action){
 function useFetchJobs(params, page){
   
   const [state, dispatch] = useReducer(
-    reducer,
+    jobsReducer,
     {
       jobs: [],
       loading: false,
@@ -43,32 +43,33 @@ function useFetchJobs(params, page){
     }
   )
 
-  useEffect(() => {
-    const fetchJobs = async (params, page) => {
+  useEffect(
+    () => {
+      const fetchJobs = async (params, page) => {
 
-      dispatchStories({type: 'MAKE_REQUEST'})
+        dispatch({type: 'MAKE_REQUEST'})
 
-      const result = await axios.get(
-        API_ENDPOINT,
-        {
-          ...params,
-          page: page,
+        const result = await axios.get(
+          API_ENDPOINT,
+          {
+            ...params,
+            page: page,
+          }
+        )
+
+        try {
+          dispatch({
+            type: 'SUCCESS_REQUEST',
+            payload: { jobs: result.data },
+          })
         }
-      )
-
-      try {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data,
-        })
+        catch {
+          dispatch({type: 'ERROR_REQUEST'})
+        }
       }
-      catch {
-        dispatchStories({type: 'STORIES_FETCH_ERROR'})
-      }
-    }
-    fetchJobs()
-  },
-  [params, page]
+      fetchJobs()
+    },
+    [params, page]
   )
 
   return state
