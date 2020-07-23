@@ -5,6 +5,7 @@ const PROXY = 'https://cors-anywhere.herokuapp.com/'
 const API_ENDPOINT = PROXY + 'https://jobs.github.com/positions.json?'
 
 function jobsReducer(state, action){
+  
   switch(action.type){
     case 'MAKE_REQUEST':
       return {
@@ -28,6 +29,13 @@ function jobsReducer(state, action){
         loading: false,
         error: true
       }
+    
+    case 'UPDATE_HAS_NEXT_PAGE':
+      return {
+        ...state,
+        hasNextPage: action.payload.hasNextPage
+      }
+    
     default:
       return state
   }
@@ -40,7 +48,8 @@ function useFetchJobs(params, page){
     {
       jobs: [],
       loading: false,
-      error: false
+      error: false,
+      hasNextPage: false
     }
   )
 
@@ -71,7 +80,30 @@ function useFetchJobs(params, page){
           dispatch({type: 'ERROR_REQUEST'})
           console.error(error)
         }
+
+        try {
+          const dummyResult = await axios.get(
+            API_ENDPOINT,
+            { 
+              params:
+                {
+                  page: page + 1,
+                  ...params
+                }
+            }
+          )
+        
+          dispatch({
+            type: 'UPDATE_HAS_NEXT_PAGE',
+            payload: { hasNextPage: dummyResult.data.length !== 0 },
+          })
+        }
+        catch(error) {
+          dispatch({type: 'ERROR_REQUEST'})
+          console.error(error)
+        }
       }
+
       fetchJobs(params, page)
     },
     [params, page]
