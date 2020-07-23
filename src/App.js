@@ -8,7 +8,13 @@ import 'regenerator-runtime/runtime' // Temp fix to: ReferenceError: regenerator
 
 function App(props){
 
-  const [params, setParams] = useState({})
+  const [params, setParams] = useState(
+    {
+      description: '',
+      location: '',
+      full_time: ''
+    }
+  )
   const [page, setPage] = useState(1)
   const { jobs, loading, error } = useFetchJobs(params, page)
 
@@ -16,7 +22,7 @@ function App(props){
     const param = event.target.name
     const value = event.target.value
     setPage(1)
-    setParams(prevParams => {
+    setParams( (prevParams) => {
       return { ...prevParams, [param]: value }
     })
   }

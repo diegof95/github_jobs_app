@@ -50,25 +50,29 @@ function useFetchJobs(params, page){
 
         dispatch({type: 'MAKE_REQUEST'})
 
-        const result = await axios.get(
-          API_ENDPOINT,
-          {
-            ...params,
-            page: page,
-          }
-        )
-
         try {
+          const result = await axios.get(
+            API_ENDPOINT,
+            { 
+              params:
+                {
+                  page: page,
+                  ...params
+                }
+            }
+          )
+        
           dispatch({
             type: 'SUCCESS_REQUEST',
             payload: { jobs: result.data },
           })
         }
-        catch {
+        catch(error) {
           dispatch({type: 'ERROR_REQUEST'})
+          console.error(error)
         }
       }
-      fetchJobs()
+      fetchJobs(params, page)
     },
     [params, page]
   )
