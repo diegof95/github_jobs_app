@@ -1,7 +1,8 @@
 import { useReducer, useEffect } from 'react'
 import axios from 'axios'
 
-const API_ENDPOINT = 'https://jobs.github.com/positions.json?'
+const PROXY = 'https://cors-anywhere.herokuapp.com/'
+const API_ENDPOINT = PROXY + 'https://jobs.github.com/positions.json?'
 
 function jobsReducer(state, action){
   switch(action.type){
