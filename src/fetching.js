@@ -55,19 +55,23 @@ function useFetchJobs(params, page){
 
   useEffect(
     () => {
+
+      const cancelToken = axios.CancelToken.source()
+      const dummyCancelToken = axios.CancelToken.source()
+
       const fetchJobs = async (params, page) => {
 
         dispatch({type: 'MAKE_REQUEST'})
-
+        
         try {
           const result = await axios.get(
             API_ENDPOINT,
             { 
-              params:
-                {
-                  page: page,
-                  ...params
-                }
+              cancelToken: cancelToken.token,
+              params: {
+                page: page,
+                ...params
+              }
             }
           )
         
@@ -77,6 +81,8 @@ function useFetchJobs(params, page){
           })
         }
         catch(error) {
+          if (axios.isCancel(error)) return
+          
           dispatch({type: 'ERROR_REQUEST'})
           console.error(error)
         }
@@ -85,6 +91,7 @@ function useFetchJobs(params, page){
           const dummyResult = await axios.get(
             API_ENDPOINT,
             { 
+              cancelToken: dummyCancelToken.token,
               params:
                 {
                   page: page + 1,
@@ -105,6 +112,11 @@ function useFetchJobs(params, page){
       }
 
       fetchJobs(params, page)
+
+      return () => {
+        cancelToken.cancel()
+        dummyCancelToken.cancel()
+      }
     },
     [params, page]
   )
